@@ -1,0 +1,31 @@
+﻿@page
+@model Demo.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Logging out...</h2>
+                    <div class="spinner-border text-primary mt-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            setTimeout(function() {
+                window.location.href = '@Url.Page("/Account/Login")';
+            }, 1000);
+        });
+    </script>
+}
