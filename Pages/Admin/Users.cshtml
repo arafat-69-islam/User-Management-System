@@ -1,0 +1,323 @@
+﻿@page
+@using Demo.Models
+@model Demo.Pages.Admin.UsersModel
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>User Management</h3>
+        <div class="d-flex gap-2">
+            <input type="text" id="filterInput" class="form-control" placeholder="Filter" style="width: 200px;">
+            <div class="btn-group">
+                <!-- Block User Button -->
+                <button class="btn btn-danger" id="blockUsers" title="Block User">
+                    <i class="fas fa-ban"></i> Block
+                </button>
+                <!-- Unblock User Button -->
+                <button class="btn btn-success" id="unblockUsers" title="Unblock User">
+                    <i class="fas fa-unlock"></i> 
+                </button>
+                <!-- Delete User Button -->
+                <button class="btn btn-warning" id="deleteUsers" title="Delete User">
+                    <i class="fas fa-trash-alt"></i> 
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert alert-success">@Model.Message</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-danger">@Model.Error</div>
+        }
+        
+        <form method="post" id="usersForm">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" /></th>
+                        <th>
+                            Name
+                            <button type="button" class="btn btn-sm btn-link p-0" onclick="sortTable(1)">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                        </th>
+                        <th>
+                            Email
+                            <button type="button" class="btn btn-sm btn-link p-0" onclick="sortTable(2)">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                        </th>
+                        <th>
+                            Last Login
+                            <button type="button" class="btn btn-sm btn-link p-0" onclick="sortTable(3)">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                        </th>
+                        <th>Status</th>
+                        <th>Activity</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td><input type="checkbox" class="user-checkbox" name="userIds" value="@user.Id" /></td>
+                            <td>
+                                @user.Name
+                                @if (!string.IsNullOrEmpty(user.MobileNumber))
+                                {
+                                    <br><small class="text-muted">@user.MobileNumber</small>
+                                }
+                            </td>
+                            <td>@user.Email</td>
+                            <td data-sort="@user.LastLogin.Ticks">
+                                <span class="last-login-time" 
+                                      data-login-time="@user.LastLogin.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")" 
+                                      data-bs-toggle="tooltip" 
+                                      data-bs-placement="top" 
+                                      title="@user.LastLogin.ToString("dddd, MMMM dd, yyyy 'at' HH:mm:ss")">
+                                    @GetRelativeTime(user.LastLogin)
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(user.Status == UserStatus.Active ? "bg-success" : user.Status == UserStatus.Blocked ? "bg-warning" : "bg-danger")">
+                                    @user.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="activity-chart" data-activity="@GenerateActivityData()"></div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            initializeTooltips();
+            
+            // Update relative times every minute
+            setInterval(updateRelativeTimes, 60000);
+            
+            // Select all checkbox functionality
+            $('#selectAll').change(function() {
+                $('.user-checkbox').prop('checked', $(this).prop('checked'));
+            });
+
+            // Filter functionality
+            $('#filterInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $("#usersTableBody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Activity charts (simple bar representation)
+            $('.activity-chart').each(function() {
+                var activity = $(this).data('activity');
+                var bars = '';
+                for (var i = 0; i < 7; i++) {
+                    var height = Math.floor(Math.random() * 20) + 5;
+                    bars += '<div style="display:inline-block;width:8px;height:' + height + 'px;background:#007bff;margin:1px;vertical-align:bottom;"></div>';
+                }
+                $(this).html(bars);
+            });
+
+            // Block users
+            $('#blockUsers').click(function() {
+                if ($('.user-checkbox:checked').length === 0) {
+                    alert('Please select at least one user');
+                    return;
+                }
+                $('#usersForm').attr('action', '@Url.Page("", "BlockUsers")').submit();
+            });
+
+            // Unblock users
+            $('#unblockUsers').click(function() {
+                if ($('.user-checkbox:checked').length === 0) {
+                    alert('Please select at least one user');
+                    return;
+                }
+                $('#usersForm').attr('action', '@Url.Page("", "UnblockUsers")').submit();
+            });
+
+            // Delete users
+            $('#deleteUsers').click(function() {
+                if ($('.user-checkbox:checked').length === 0) {
+                    alert('Please select at least one user');
+                    return;
+                }
+                if (confirm('Are you sure you want to delete the selected users?')) {
+                    $('#usersForm').attr('action', '@Url.Page("", "DeleteUsers")').submit();
+                }
+            });
+        });
+
+        function initializeTooltips() {
+            // Dispose existing tooltips first
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+            
+            // Initialize new tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        function updateRelativeTimes() {
+            $('.last-login-time').each(function() {
+                var $this = $(this);
+                var loginTimeStr = $this.data('login-time');
+                var loginTime = new Date(loginTimeStr);
+                var relativeTime = getRelativeTime(loginTime);
+                var fullDateTime = formatFullDateTime(loginTime);
+                
+                $this.text(relativeTime);
+                $this.attr('title', fullDateTime);
+            });
+            
+            // Re-initialize tooltips after updating
+            initializeTooltips();
+        }
+
+        function getRelativeTime(date) {
+            var now = new Date();
+            var diffInSeconds = Math.floor((now - date) / 1000);
+            var diffInMinutes = Math.floor(diffInSeconds / 60);
+            var diffInHours = Math.floor(diffInMinutes / 60);
+            var diffInDays = Math.floor(diffInHours / 24);
+            var diffInWeeks = Math.floor(diffInDays / 7);
+            var diffInMonths = Math.floor(diffInDays / 30);
+            var diffInYears = Math.floor(diffInDays / 365);
+
+            if (diffInSeconds < 60) {
+                return diffInSeconds <= 1 ? 'just now' : diffInSeconds + ' seconds ago';
+            } else if (diffInMinutes < 60) {
+                return diffInMinutes === 1 ? '1 minute ago' : diffInMinutes + ' minutes ago';
+            } else if (diffInHours < 24) {
+                return diffInHours === 1 ? '1 hour ago' : diffInHours + ' hours ago';
+            } else if (diffInDays < 7) {
+                return diffInDays === 1 ? '1 day ago' : diffInDays + ' days ago';
+            } else if (diffInWeeks < 4) {
+                return diffInWeeks === 1 ? '1 week ago' : diffInWeeks + ' weeks ago';
+            } else if (diffInMonths < 12) {
+                return diffInMonths === 1 ? '1 month ago' : diffInMonths + ' months ago';
+            } else {
+                return diffInYears === 1 ? '1 year ago' : diffInYears + ' years ago';
+            }
+        }
+
+        function formatFullDateTime(date) {
+            var options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Table sorting functionality
+        function sortTable(columnIndex) {
+            var table = document.querySelector('table');
+            var tbody = table.querySelector('tbody');
+            var rows = Array.from(tbody.rows);
+            
+            var isAscending = table.getAttribute('data-sort-direction') !== 'asc';
+            table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');
+            
+            rows.sort(function(a, b) {
+                var aVal = a.cells[columnIndex].textContent.trim();
+                var bVal = b.cells[columnIndex].textContent.trim();
+                
+                // Handle date sorting for Last Login column
+                if (columnIndex === 3) {
+                    aVal = a.cells[columnIndex].getAttribute('data-sort') || '0';
+                    bVal = b.cells[columnIndex].getAttribute('data-sort') || '0';
+                    return isAscending ? aVal - bVal : bVal - aVal;
+                }
+                
+                if (aVal < bVal) return isAscending ? -1 : 1;
+                if (aVal > bVal) return isAscending ? 1 : -1;
+                return 0;
+            });
+            
+            tbody.innerHTML = '';
+            rows.forEach(function(row) {
+                tbody.appendChild(row);
+            });
+            
+            // Re-initialize tooltips after sorting
+            initializeTooltips();
+        }
+    </script>
+}
+
+@functions {
+    string GenerateActivityData()
+    {
+        // This would normally come from actual user activity data
+        return "sample_activity_data";
+    }
+    
+    string GetRelativeTime(DateTime dateTime)
+    {
+        var now = DateTime.UtcNow;
+        var timeSpan = now - dateTime;
+        
+        if (timeSpan.TotalSeconds < 60)
+        {
+            var seconds = (int)timeSpan.TotalSeconds;
+            return seconds <= 1 ? "just now" : $"{seconds} seconds ago";
+        }
+        else if (timeSpan.TotalMinutes < 60)
+        {
+            var minutes = (int)timeSpan.TotalMinutes;
+            return minutes == 1 ? "1 minute ago" : $"{minutes} minutes ago";
+        }
+        else if (timeSpan.TotalHours < 24)
+        {
+            var hours = (int)timeSpan.TotalHours;
+            return hours == 1 ? "1 hour ago" : $"{hours} hours ago";
+        }
+        else if (timeSpan.TotalDays < 7)
+        {
+            var days = (int)timeSpan.TotalDays;
+            return days == 1 ? "1 day ago" : $"{days} days ago";
+        }
+        else if (timeSpan.TotalDays < 30)
+        {
+            var weeks = (int)(timeSpan.TotalDays / 7);
+            return weeks == 1 ? "1 week ago" : $"{weeks} weeks ago";
+        }
+        else if (timeSpan.TotalDays < 365)
+        {
+            var months = (int)(timeSpan.TotalDays / 30);
+            return months == 1 ? "1 month ago" : $"{months} months ago";
+        }
+        else
+        {
+            var years = (int)(timeSpan.TotalDays / 365);
+            return years == 1 ? "1 year ago" : $"{years} years ago";
+        }
+    }
+}
