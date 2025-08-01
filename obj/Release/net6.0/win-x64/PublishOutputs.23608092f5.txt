@@ -1,0 +1,15 @@
+H:\muntakim\Personal\Itransation\Demo\publish\Demo.exe
+H:\muntakim\Personal\Itransation\Demo\publish\appsettings.Development.json
+H:\muntakim\Personal\Itransation\Demo\publish\appsettings.json
+H:\muntakim\Personal\Itransation\Demo\publish\appsettings.Production.json
+H:\muntakim\Personal\Itransation\Demo\publish\Demo.runtimeconfig.json
+H:\muntakim\Personal\Itransation\Demo\publish\Demo.pdb
+H:\muntakim\Personal\Itransation\Demo\publish\Microsoft.Extensions.Caching.Memory.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Microsoft.EntityFrameworkCore.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Microsoft.EntityFrameworkCore.Abstractions.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Microsoft.EntityFrameworkCore.Relational.dll
+H:\muntakim\Personal\Itransation\Demo\publish\MySqlConnector.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Pomelo.EntityFrameworkCore.MySql.dll
+H:\muntakim\Personal\Itransation\Demo\publish\System.Security.Permissions.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Demo.dll
+H:\muntakim\Personal\Itransation\Demo\publish\Demo.deps.json
