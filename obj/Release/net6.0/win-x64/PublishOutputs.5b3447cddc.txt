@@ -1,0 +1,15 @@
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Demo.exe
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\appsettings.Development.json
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\appsettings.json
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\appsettings.Production.json
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Demo.runtimeconfig.json
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Demo.pdb
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.Extensions.Caching.Memory.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\MySqlConnector.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Pomelo.EntityFrameworkCore.MySql.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\System.Security.Permissions.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Demo.dll
+H:\muntakim\Personal\Itransation\Demo\Demo\obj\Release\net6.0\win-x64\PubTmp\Out\Demo.deps.json
